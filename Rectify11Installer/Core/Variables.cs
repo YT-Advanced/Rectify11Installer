@@ -9,6 +9,8 @@ namespace Rectify11Installer.Core
 	{
 		//TODO: For v4 add iso patching
 
+		public static string progdata => Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+
 		public static string Windir => Environment.GetFolderPath(Environment.SpecialFolder.Windows);
 
 		public static string r11Folder => System.IO.Path.Combine(Windir, "Rectify11");
@@ -36,5 +38,10 @@ namespace Rectify11Installer.Core
 		public static bool skipUpdateCheck { get; set; } = false;
 
 		public static bool IsItemsSelected { get; set; }
+
+		// runtimes
+		public static bool vcRedist { get; set; }
+		public static bool core31 { get; set; }
+		public static bool InstallIcons { get; set; }
 	}
 }

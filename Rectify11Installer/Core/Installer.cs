@@ -10,7 +10,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Rectify11Installer.Win32;
 using static System.Environment;
-
+using KPreisser.UI;
+using Rectify11Installer.Core;
 namespace Rectify11Installer.Core
 {
 	public class Installer
@@ -61,7 +62,20 @@ namespace Rectify11Installer.Core
 				Logger.WriteLine("InstallRuntimes() failed.");
 				return false;
 			}
-			Logger.WriteLine("InstallRuntimes() succeeded.");
+			if (Variables.vcRedist && Variables.core31)
+			{
+				Logger.WriteLine("InstallRuntimes() succeeded.");
+			}
+			else if (!Variables.vcRedist)
+			{
+				Logger.Warn("vcredist.exe installation failed.");
+				RuntimeInstallError("Visual C++ Runtime", "Visual C++ Runtime is used for MicaForEveryone and AccentColorizer.", "https://aka.ms/vs/17/release/vc_redist.x64.exe");
+			}
+			else if (!Variables.core31)
+			{
+				Logger.Warn("core31.exe installation failed.");
+				RuntimeInstallError(".NET Core 3.1", ".NET Core 3.1 is used for MicaForEveryone.", "https://dotnet.microsoft.com/en-us/download/dotnet/3.1");
+			}
 			Logger.WriteLine("══════════════════════════════════════════════");
 			if (!Theme.IsUsingDarkMode)
 			{
@@ -100,7 +114,6 @@ namespace Rectify11Installer.Core
 						" x -o" + Path.Combine(Variables.r11Folder, "themes") +
 						" " + Path.Combine(Variables.r11Folder, "themes.7z"), AppWinStyle.Hide, true));
 				Logger.WriteLine("Extracted themes.7z");
-
 				if (!await Task.Run(() => InstallThemes()))
 				{
 					Logger.WriteLine("InstallThemes() failed.");
@@ -145,9 +158,11 @@ namespace Rectify11Installer.Core
 				if (Directory.Exists(Path.Combine(Variables.r11Folder, "extras")))
 				{
 					await Task.Run(() => Interaction.Shell(Path.Combine(Variables.sys32Folder, "taskkill.exe") + " /f /im AccentColorizer.exe", AppWinStyle.Hide, true));
+					await Task.Run(() => Interaction.Shell(Path.Combine(Variables.sys32Folder, "taskkill.exe") + " /f /im AccentColorizerEleven.exe", AppWinStyle.Hide, true));
+					await Task.Run(() => Interaction.Shell(Path.Combine(Variables.sys32Folder, "taskkill.exe") + " /f /im AcrylicMenusLoader.exe", AppWinStyle.Hide, true));
 					try
 					{
-						await Task.Run(() => Directory.Delete(Path.Combine(Variables.r11Folder, "extras"), true));
+						Directory.Delete(Path.Combine(Variables.r11Folder, "extras"), true);
 						Logger.WriteLine(Path.Combine(Variables.r11Folder, "extras") + " exists. Deleting it.");
 					}
 					catch (Exception ex)
@@ -159,6 +174,7 @@ namespace Rectify11Installer.Core
 						" x -o" + Path.Combine(Variables.r11Folder, "extras") +
 						" " + Path.Combine(Variables.r11Folder, "extras.7z"), AppWinStyle.Hide, true));
 				Logger.WriteLine("Extracted extras.7z");
+				
 				if (InstallOptions.InstallWallpaper)
 				{
 					if (!await Task.Run(() => InstallWallpapers()))
@@ -173,6 +189,30 @@ namespace Rectify11Installer.Core
 					// always would work ig
 					await Task.Run(() => Installasdf());
 					Logger.WriteLine("Installasdf() succeeded.");
+				}
+                if (InstallOptions.InstallGadgets)
+                {
+                    // always would work ig 2
+                    await Task.Run(() => InstallGadgets());
+                    Logger.WriteLine("InstallGadgets() succeeded.");
+                }
+                if (InstallOptions.InstallShell)
+                {
+                    // always would work ig 3
+                    await Task.Run(() => InstallShell());
+                    Logger.WriteLine("InstallShell() succeeded.");
+                }
+				if (InstallOptions.userAvatars)
+                {
+					// always would work ig 4
+					await Task.Run(() => InstallUserAvatars());
+					Logger.WriteLine("InstallUserAvatars() succeeded.");
+                }
+				if (InstallOptions.InstallSounds)
+				{
+					// always would work ig 5
+					await Task.Run(() => InstallSounds());
+					Logger.WriteLine("InstallSounds() succeeded.");
 				}
 				Logger.WriteLine("InstallExtras() succeeded.");
 				Logger.WriteLine("══════════════════════════════════════════════");
@@ -269,7 +309,7 @@ namespace Rectify11Installer.Core
 
 				// runs only if any one of mmcbase.dll.mun, mmc.exe.mui and mmcndmgr.dll.mun is selected
 				if (InstallOptions.iconsList.Contains("mmcbase.dll.mun")
-					|| InstallOptions.iconsList.Contains("mmc.exe.mui")
+					|| InstallOptions.iconsList.Contains("mmc.exe")
 					|| InstallOptions.iconsList.Contains("mmcndmgr.dll.mun"))
 				{
 					if (!await Task.Run(() => MMCHelper.PatchAll()))
@@ -289,7 +329,6 @@ namespace Rectify11Installer.Core
 					}
 					Logger.WriteLine("FixOdbc() succeeded");
 				}
-
 				// phase 2
 				await Task.Run(() => Interaction.Shell(Path.Combine(Variables.r11Folder, "aRun.exe")
 					+ " /EXEFilename " + '"' + Path.Combine(Variables.r11Folder, "Rectify11.Phase2.exe") + '"'
@@ -421,13 +460,17 @@ namespace Rectify11Installer.Core
 			{
 				File.Copy(themefiles[i].FullName, Path.Combine(Variables.Windir, "Resources", "Themes", themefiles[i].Name), true);
 			}
+			File.WriteAllBytes(Path.Combine(Variables.r11Folder, "aRun1.exe"), Properties.Resources.AdvancedRun);
 			for (var i = 0; i < msstyleDirList.Length; i++)
 			{
 				if (Directory.Exists(Path.Combine(Variables.Windir, "Resources", "Themes", msstyleDirList[i].Name)))
 				{
 					try
 					{
-						Directory.Delete(Path.Combine(Variables.Windir, "Resources", "Themes", msstyleDirList[i].Name), true);
+						Interaction.Shell(Path.Combine(Variables.r11Folder, "aRun1.exe")
+	                    + " /EXEFilename " + '"' + Path.Combine(Variables.sys32Folder, "cmd.exe") + '"'
+	                    + " /CommandLine " + "\'" + "/c rmdir /s /q " + Path.Combine(Variables.Windir, "Resources", "Themes", msstyleDirList[i].Name) + "\'"
+	                    + " /WaitProcess 1 /RunAs 8 /Run", AppWinStyle.NormalFocus, true);
 						Logger.WriteLine(Path.Combine(Variables.Windir, "Resources", "Themes", msstyleDirList[i].Name) + " exists. Deleting it.");
 					}
 					catch (Exception ex)
@@ -447,6 +490,7 @@ namespace Rectify11Installer.Core
 					return false;
 				}
 			}
+			File.Delete(Path.Combine(Variables.r11Folder, "aRun1.exe"));
 			return true;
 		}
 
@@ -485,6 +529,132 @@ namespace Rectify11Installer.Core
 			Interaction.Shell(Path.Combine(Variables.sys32Folder, "schtasks.exe") + " /create /tn asdf /xml " + Path.Combine(Variables.r11Folder, "extras", "AccentColorizer", "asdf.xml"), AppWinStyle.Hide);
 		}
 
+        /// <summary>
+        /// installs gadgets
+        /// </summary>
+        private void InstallGadgets()
+        {
+            Interaction.Shell(Path.Combine(Variables.sys32Folder, "schtasks.exe") + " /create /tn gadgets /xml " + Path.Combine(Variables.r11Folder, "extras", "GadgetPack", "gadget.xml"), AppWinStyle.Hide);
+        }
+
+		/// <summary>
+		/// installs nilesoft shell
+		/// </summary>
+		private void InstallShell()
+		{
+			string s = "";
+			if (NativeMethods.IsArm64()) s = "Arm64";
+			if (Directory.Exists(Path.Combine(Variables.Windir, "nilesoft"))) 
+			{
+				DirectoryInfo niledir = new(Path.Combine(Variables.r11Folder, "extras", "nilesoft"+s));
+				for (int i = 0; i < niledir.GetFiles("*").Length; i++)
+				{
+					try
+					{
+						File.Copy(niledir.GetFiles("*")[i].FullName, Path.Combine(Variables.Windir, "nilesoft"), true);
+					}
+					catch { } //This try-catch is needed cuz installer might exception if shell.dll is still loaded, it happens sometimes even if shell is unregistered
+				}
+				if (!Directory.Exists(Path.Combine(Variables.Windir, "nilesoft", "AcrylicMenus")))
+				{
+					Directory.Move(Path.Combine(Variables.r11Folder, "extras", "nilesoft", "AcrylicMenus"), Path.Combine(Variables.Windir, "nilesoft", "AcrylicMenus"));
+				}
+			}
+			else
+            {
+				Directory.Move(Path.Combine(Variables.r11Folder, "extras", "nilesoft"+s), Path.Combine(Variables.Windir, "nilesoft"));
+			}
+			ProcessStartInfo shlinfo2 = new()
+			{
+				FileName = Path.Combine(Variables.Windir, "nilesoft", "shell.exe"),
+				WindowStyle = ProcessWindowStyle.Hidden,
+				Arguments = " -r"
+			};
+
+			int num = InstallOptions.CMenuStyle;
+			if (File.Exists(Path.Combine(GetFolderPath(SpecialFolder.CommonStartMenu), "programs", "startup", "acrylmenu.lnk")))
+			{
+				File.Delete(Path.Combine(GetFolderPath(SpecialFolder.CommonStartMenu), "programs", "startup", "acrylmenu.lnk"));
+			}
+			string text = (string)Properties.Resources.ResourceManager.GetObject("config" + num);
+			File.WriteAllText(Path.Combine(Variables.Windir, "nilesoft", "shell.nss"), text);
+			var shlInstproc2 = Process.Start(shlinfo2);
+			shlInstproc2.WaitForExit();
+			if (num == 4)
+			{
+				using ShellLink shortcut = new();
+				shortcut.Target = Path.Combine(Variables.r11Folder, "extras", "nilesoft", "AcrylicMenus", "AcrylicMenusLoader.exe");
+				shortcut.WorkingDirectory = @"%windir%\nilesoft\AcrylicMenus";
+				shortcut.DisplayMode = ShellLink.LinkDisplayMode.edmNormal;
+				shortcut.Save(Path.Combine(GetFolderPath(SpecialFolder.CommonStartMenu), "programs", "startup", "acrylmenu.lnk"));
+			}
+			else if (num == 5)
+			{
+				shlinfo2.Arguments = " -u";
+				var shlUnInstproc = Process.Start(shlinfo2);
+				shlUnInstproc.WaitForExit();
+			}
+
+		}
+
+		/// <summary>
+		/// installs User Avatars
+		/// </summary>
+		private void InstallUserAvatars()
+		{
+			if (!Directory.Exists(Path.Combine(Variables.progdata, "Microsoft", "User Account Pictures", "Default Pictures"))){
+
+				Directory.CreateDirectory(Path.Combine(Variables.progdata, "Microsoft", "User Account Pictures", "Default Pictures"));
+			}
+
+			DirectoryInfo info = new DirectoryInfo(Path.Combine(Variables.r11Folder, "extras", "UserAV"));
+			for (int i = 0; i < info.GetFiles().Length; i++)
+            {
+				File.Copy(Path.Combine(Variables.r11Folder, "extras", "userAV", info.GetFiles("*.*")[i].Name),
+					      Path.Combine(Variables.progdata, "Microsoft", "User Account Pictures", "Default Pictures", info.GetFiles("*.*")[i].Name), true);
+            }
+		}
+
+		/// <summary>
+		/// installs sounds
+		/// </summary>
+        private void InstallSounds()
+        {
+			if (!File.Exists(Path.Combine(Variables.Windir, "Media", "ClassicSoundsService.exe")))
+			{
+				File.Move(Path.Combine(Variables.r11Folder, "extras", "ClassicSoundsService.exe"), Path.Combine(Variables.Windir, "media", "ClassicSoundsService.exe"));
+			}
+			if (!Directory.Exists(Path.Combine(Variables.Windir, "Media", "dm")))
+			{
+				Directory.CreateDirectory(Path.Combine(Variables.Windir, "Media", "dm"));
+			}
+			Interaction.Shell(Path.Combine(Variables.Windir, "Media", "ClassicSoundsService.exe") + " +", AppWinStyle.NormalFocus, true);
+			DirectoryInfo sndir = new DirectoryInfo(Path.Combine(Variables.r11Folder, "extras", "Media"));
+			DirectoryInfo snDMdir = new DirectoryInfo(Path.Combine(Variables.r11Folder, "extras", "Media", "dm"));
+			File.WriteAllBytes(Path.Combine(Variables.r11Folder, "aRun2.exe"), Properties.Resources.AdvancedRun);
+
+			Interaction.Shell(Path.Combine(Variables.r11Folder, "aRun2.exe") + " /EXEFilename " + '"' + 
+				Path.Combine(Variables.Windir, "Media", "ClassicSoundsService.exe") + '"' + " /CommandLine " + "\'" + " +" + "\'" + " /WaitProcess 1 /RunAs 8 /Run", AppWinStyle.NormalFocus, true);
+			for (int i=0; i<sndir.GetFiles().Length; i++)
+            {
+				Interaction.Shell(Path.Combine(Variables.r11Folder, "aRun2.exe")
+						+ " /EXEFilename " + '"' + Path.Combine(Variables.sys32Folder, "cmd.exe") + '"'
+						+ " /CommandLine " + "\'" + "/c copy " + '"' + sndir.GetFiles()[i].FullName + '"' + " " 
+						+ Path.Combine(Variables.Windir, "Media") + " /y" + "\'"
+						+ " /WaitProcess 1 /RunAs 8 /Run", AppWinStyle.NormalFocus, true);
+            }
+			for (int i = 0; i < snDMdir.GetFiles().Length; i++)
+			{
+				Interaction.Shell(Path.Combine(Variables.r11Folder, "aRun2.exe")
+						+ " /EXEFilename " + '"' + Path.Combine(Variables.sys32Folder, "cmd.exe") + '"'
+						+ " /CommandLine " + "\'" + "/c copy " + '"' + snDMdir.GetFiles()[i].FullName + '"' + " "
+						+ Path.Combine(Variables.Windir, "Media", "dm") + " /y" + "\'"
+						+ " /WaitProcess 1 /RunAs 8 /Run", AppWinStyle.NormalFocus, true);
+			}
+			File.Delete(Path.Combine(Variables.r11Folder, "aRun2.exe"));
+			Interaction.Shell(Path.Combine(Variables.sys32Folder, "reg.exe") + " import " + Path.Combine(Variables.r11Folder, "extras", "Sound.reg"), AppWinStyle.Hide);
+		}
+
 		/// <summary>
 		/// installs control center
 		/// </summary>
@@ -508,53 +678,24 @@ namespace Rectify11Installer.Core
 			{
 				Directory.Delete(Path.Combine(GetEnvironmentVariable("localappdata") ?? string.Empty, "Mica For Everyone"), true);
 			}
-			if (InstallOptions.TabbedNotMica)
+            string t = "";
+            if (InstallOptions.TabbedNotMica) t = "T";
+			if (InstallOptions.ThemeLight)
 			{
-				if (InstallOptions.ThemeLight)
-				{
-					File.Copy(Path.Combine(Variables.Windir, "MicaForEveryone", "CONF", "Tlightrectified.conf"), Path.Combine(Variables.Windir, "MicaForEveryone", "MicaForEveryone.conf"), true);
-				}
-				else if (InstallOptions.ThemeDark)
-				{
-					File.Copy(Path.Combine(Variables.Windir, "MicaForEveryone", "CONF", "Tdarkrectified.conf"), Path.Combine(Variables.Windir, "MicaForEveryone", "MicaForEveryone.conf"), true);
-				}
-				else
-				{
-					File.Copy(Path.Combine(Variables.Windir, "MicaForEveryone", "CONF", "Tblack.conf"), Path.Combine(Variables.Windir, "MicaForEveryone", "MicaForEveryone.conf"), true);
-					if (NativeMethods.IsArm64())
-					{
-						Interaction.Shell(Path.Combine(Variables.sys32Folder, "schtasks.exe") + " /create /tn micafix /xml " + Path.Combine(Variables.Windir, "MicaForEveryone", "XML", "micafixARM64.xml"), AppWinStyle.Hide);
-					}
-					else
-					{
-						Interaction.Shell(Path.Combine(Variables.sys32Folder, "schtasks.exe") + " /create /tn micafix /xml " + Path.Combine(Variables.Windir, "MicaForEveryone", "XML", "micafixAMD64.xml"), AppWinStyle.Hide);
-					}
-				}
+				File.Copy(Path.Combine(Variables.Windir, "MicaForEveryone", "CONF", t + "lightrectified.conf"), Path.Combine(Variables.Windir, "MicaForEveryone", "MicaForEveryone.conf"), true);
+			}
+			else if (InstallOptions.ThemeDark)
+			{
+				File.Copy(Path.Combine(Variables.Windir, "MicaForEveryone", "CONF", t + "darkrectified.conf"), Path.Combine(Variables.Windir, "MicaForEveryone", "MicaForEveryone.conf"), true);
 			}
 			else
 			{
-
-				if (InstallOptions.ThemeLight)
-				{
-					File.Copy(Path.Combine(Variables.Windir, "MicaForEveryone", "CONF", "lightrectified.conf"), Path.Combine(Variables.Windir, "MicaForEveryone", "MicaForEveryone.conf"), true);
-				}
-				else if (InstallOptions.ThemeDark)
-				{
-					File.Copy(Path.Combine(Variables.Windir, "MicaForEveryone", "CONF", "darkrectified.conf"), Path.Combine(Variables.Windir, "MicaForEveryone", "MicaForEveryone.conf"), true);
-				}
-				else
-				{
-					File.Copy(Path.Combine(Variables.Windir, "MicaForEveryone", "CONF", "black.conf"), Path.Combine(Variables.Windir, "MicaForEveryone", "MicaForEveryone.conf"), true);
-					if (NativeMethods.IsArm64())
-					{
-						Interaction.Shell(Path.Combine(Variables.sys32Folder, "schtasks.exe") + " /create /tn micafix /xml " + Path.Combine(Variables.Windir, "MicaForEveryone", "XML", "micafixARM64.xml"), AppWinStyle.Hide);
-					}
-					else
-					{
-						Interaction.Shell(Path.Combine(Variables.sys32Folder, "schtasks.exe") + " /create /tn micafix /xml " + Path.Combine(Variables.Windir, "MicaForEveryone", "XML", "micafixAMD64.xml"), AppWinStyle.Hide);
-					}
-				}
+				File.Copy(Path.Combine(Variables.Windir, "MicaForEveryone", "CONF", t + "black.conf"), Path.Combine(Variables.Windir, "MicaForEveryone", "MicaForEveryone.conf"), true);
+				string amdorarm = "AMD";
+				if (NativeMethods.IsArm64()) amdorarm = "ARM";
+				Interaction.Shell(Path.Combine(Variables.sys32Folder, "schtasks.exe") + " /create /tn micafix /xml " + Path.Combine(Variables.Windir, "MicaForEveryone", "XML", "micafix" + amdorarm + "64.xml"), AppWinStyle.Hide);
 			}
+
 		}
 
 		private void LogFile(string file, bool error, Exception ex)
@@ -621,31 +762,18 @@ namespace Rectify11Installer.Core
 					LogFile("themes.7z", true, ex);
 					return false;
 				}
-				if (NativeMethods.IsArm64())
+
+				var s = Properties.Resources.SecureUxHelper_x64;
+				if (NativeMethods.IsArm64()) s = Properties.Resources.SecureUxHelper_arm64;
+				try
 				{
-					try
-					{
-						File.WriteAllBytes(Path.Combine(Variables.Windir, "SecureUXHelper.exe"), Properties.Resources.SecureUxHelper_arm64);
-						LogFile("SecureUXHelper(arm64).exe", false, null);
-					}
-					catch (Exception ex)
-					{
-						LogFile("SecureUXHelper(arm64).exe", true, ex);
-						return false;
-					}
+					File.WriteAllBytes(Path.Combine(Variables.Windir, "SecureUXHelper.exe"), s);
+					LogFile("SecureUXHelper.exe", false, null);
 				}
-				else
+				catch (Exception ex)
 				{
-					try
-					{
-						File.WriteAllBytes(Path.Combine(Variables.Windir, "SecureUXHelper.exe"), Properties.Resources.SecureUxHelper_x64);
-						LogFile("SecureUXHelper(x64).exe", false, null);
-					}
-					catch (Exception ex)
-					{
-						LogFile("SecureUXHelper(x64).exe", true, ex);
-						return false;
-					}
+					LogFile("SecureUXHelper.exe", true, ex);
+					return false;
 				}
 			}
 			if (!themes && !icons)
@@ -750,7 +878,7 @@ namespace Rectify11Installer.Core
 		}
 
 		/// <summary>
-		/// installs runtimes
+		/// installs runtimes and shows a warning message if the installation of runtimes fails.
 		/// </summary>
 		private bool InstallRuntimes()
 		{
@@ -769,34 +897,61 @@ namespace Rectify11Installer.Core
 				  " core31.exe", AppWinStyle.Hide, true);
 			}
 			Logger.WriteLine("Executing vcredist.exe with arguments /install /quiet /norestart");
-			ProcessStartInfo Psi = new()
+			ProcessStartInfo vcinfo = new()
 			{
 				FileName = Path.Combine(Variables.r11Folder, "vcredist.exe"),
 				WindowStyle = ProcessWindowStyle.Hidden,
 				Arguments = " /install /quiet /norestart"
 			};
-			var proc = Process.Start(Psi);
-			if (proc == null) return false;
-			proc.WaitForExit();
-			if (!proc.HasExited) return false;
-			Logger.WriteLine("vcredist.exe exited with error code " + proc.ExitCode.ToString());
+			var vcproc = Process.Start(vcinfo);
+			if (vcproc == null) return false;
+			vcproc.WaitForExit();
+			if (!vcproc.HasExited) return false;
+			Logger.WriteLine("vcredist.exe exited with error code " + vcproc.ExitCode.ToString());
+			if (vcproc.ExitCode != 0 && vcproc.ExitCode != 1638 && vcproc.ExitCode != 3010)
+			{
+				Variables.vcRedist = false;
+			}
+			else Variables.vcRedist = true;
+
 			Logger.WriteLine("Executing core31.exe with arguments /install /quiet /norestart");
-			ProcessStartInfo Psi2 = new()
+			ProcessStartInfo core3info = new()
 			{
 				FileName = Path.Combine(Variables.r11Folder, "core31.exe"),
 				WindowStyle = ProcessWindowStyle.Hidden,
 				Arguments = " /install /quiet /norestart"
 			};
-			var proc2 = Process.Start(Psi2);
-			if (proc2 == null) return false;
-			proc2.WaitForExit();
-			if (!proc2.HasExited) return false;
-			Logger.WriteLine("core31.exe exited with error code " + proc2.ExitCode.ToString());
-			return proc.ExitCode is 0 or 3010
-				   && proc2.ExitCode is 0 or 1638;
-
+			var core3proc = Process.Start(core3info);
+			if (core3proc == null) return false;
+			core3proc.WaitForExit();
+			if (!core3proc.HasExited) return false;
+			Logger.WriteLine("core31.exe exited with error code " + core3proc.ExitCode.ToString());
+			if (core3proc.ExitCode != 0 && core3proc.ExitCode != 1638 && core3proc.ExitCode != 3010)
+			{
+				Variables.core31 = false;
+			}
+			else Variables.core31 = true;
+			return true;
 		}
 
+		private void RuntimeInstallError(string app, string info, string link)
+        {
+			TaskDialog td = new();
+			td.Page.Text = "Installation of " + app + " has failed. You need to install it manually.";
+			td.Page.Instruction = "Runtime installation error";
+			td.Page.Title = "Rectify11 Setup";
+			td.Page.StandardButtons = TaskDialogButtons.OK;
+			td.Page.Icon = TaskDialogStandardIcon.SecurityWarningYellowBar;
+			td.Page.EnableHyperlinks = true;
+			TaskDialogExpander tde = new();
+			tde.Text = info + " \nDownload from <a href=\"" + link + "\">here</a>";
+			tde.Expanded = false;
+			tde.ExpandFooterArea = true;
+			tde.CollapsedButtonText = "More information";
+			tde.ExpandedButtonText = "Less information";
+			td.Page.Expander = tde;
+			td.Show();
+		}
 		/// <summary>
 		/// sets required registry values for phase 2
 		/// </summary>

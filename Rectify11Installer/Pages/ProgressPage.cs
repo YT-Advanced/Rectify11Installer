@@ -2,13 +2,14 @@ using KPreisser.UI;
 using Microsoft.VisualBasic;
 using Microsoft.Win32;
 using Rectify11Installer.Core;
+using Rectify11Installer.Win32;
 using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using static System.Environment;
 namespace Rectify11Installer.Pages
 {
 	public partial class ProgressPage : WizardPage
@@ -20,12 +21,13 @@ namespace Rectify11Installer.Pages
 		private int CurrentTextIndex = -1;
 		private static readonly InstallerTexts[] Rectify11InstallerTexts =
 		{
-			new("Did you know that...", "Rectify11 has better Win32 DPI support because we scale controls correctly.", Properties.Resources.dpi),
-			new("Rectify11 has a better Theme", "We have tried our best to replicate WinUI controls in our themes, and the dark theme is just amazing.", Properties.Resources.theme),
-			new("Rectify11 has better Performance", "We strongly value performance. You can choose things that you want to debloat in your system.", Properties.Resources.perf),
-			new("Rectify11 has changed everything", "We have changed many icons in many different DLL's, resulting in a more consistent operating system.", Properties.Resources.ep),
-			new("Rectified Control Panel", "We changed many details in the control panel, such as removing old gradients and adding back removed items", Properties.Resources.cp),
-			new("Thank you!", "The team appreciates your support, thank you for installing Rectify11.", Properties.Resources.install)
+			new("Rectify11 has changed everything", "We have modernized icons across the whole system, resulting in a more consistent and fluent user experience.", Properties.Resources.iconnewtree),
+			new("Did you know?", "Rectify11 has better Win32 DPI support because we scale controls correctly.", Properties.Resources.dpi),
+			new("Rectify11 has a more consistent theme.", "We have tried our best to replicate WinUI controls in our themes and the dark theme is just amazing.", Properties.Resources.themepage),
+			new("Rectify11 has better performance", "We strongly value performance. In future releases, you will be able to choose things that you want to debloat in your system.", Properties.Resources.perf),
+			new("Rectified Control Panel", "We improved many details in the control panel, such as modernizing old visuals and adding back removed items", Properties.Resources.cp),
+			new("Need help or technical support?", "You can ask us anything on our official Discord server. The link is on the GitHub page, where you have downloaded the installer.", Properties.Resources.discord),
+			new("Thank you!", "We appreciate your support, thank you for installing Rectify11.", Properties.Resources.cool)
 		};
 		#endregion
 		#region Classes
@@ -54,14 +56,16 @@ namespace Rectify11Installer.Pages
 			};
 			timer2.Tick += Timer2_Tick;
 			frmwiz = frm;
+			NavigationHelper.OnNavigate += NavigationHelper_OnNavigate;
 		}
+
 		public void StartReset()
 		{
 			timer1.Stop();
 			progressText.Text = "Restarting your PC";
-			progressInfo.Text = "Rectify11 has finished patching your system. Your PC needs to restart in order to apply the changes, it will automatically restart in " + duration.ToString() + " seconds";
+			progressInfo.Text = "Rectify11 has finished installing. Your device needs to restart in order to complete the installation, it will automatically restart in " + duration.ToString() + " seconds";
 			frmwiz.InstallerProgress = "Restarting in " + duration.ToString() + " seconds";
-			frmwiz.UpdateSideImage = global::Rectify11Installer.Properties.Resources.incomplete;
+			frmwiz.UpdateSideImage = global::Rectify11Installer.Properties.Resources.done;
 			timer2.Start();
 			frmwiz.ShowRebootButton = true;
 			frmwiz.SetRebootHandler = rebootButton_Click;
@@ -73,6 +77,36 @@ namespace Rectify11Installer.Pages
 		}
 		#endregion
 		#region Private Methods
+
+		private async void NavigationHelper_OnNavigate(object sender, EventArgs e)
+		{
+			if ((WizardPage)sender == RectifyPages.ProgressPage)
+			{
+				frmwiz.versionLabel.Visible = false;
+				ExtrasOptions.FinalizeIRectify11();
+				frmwiz.pictureBox1.Visible = true;
+				frmwiz.progressLabel.Visible = true;
+				RectifyPages.ProgressPage.Start();
+				NativeMethods.SetCloseButton(frmwiz, false);
+				Variables.isInstall = true;
+				Installer installer = new();
+				Logger.CommitLog();
+				if (!await installer.Install(frmwiz))
+				{
+					Logger.CommitLog();
+					TaskDialog.Show(text: "Rectify11 setup encountered an error, for more information, see the log in " + Path.Combine(Variables.r11Folder, "installer.log") + ", and report it to rectify11 development server",
+						title: "Error",
+						buttons: TaskDialogButtons.OK,
+						icon: TaskDialogStandardIcon.Error);
+					Application.Exit();
+				}
+				else
+				{
+					Logger.CommitLog();
+					RectifyPages.ProgressPage.StartReset();
+				}
+			}
+		}
 
 		/// <summary>
 		/// clears *.db cache files
@@ -118,24 +152,27 @@ namespace Rectify11Installer.Pages
 			if (InstallOptions.InstallThemes)
 			{
 				var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce", true);
+				string s = "e";
 				if (key != null)
 				{
 					if (InstallOptions.ThemeLight)
 					{
 						await Task.Run(() => Process.Start(Path.Combine(Variables.Windir, "Resources", "Themes", "lightrectified.theme")));
-						key.SetValue("ApplyTheme", Path.Combine(Variables.Windir, "SecureUXHelper.exe") + " apply " + '"' + "Rectify11 light theme" + '"', RegistryValueKind.String);
+						s = Path.Combine(Variables.Windir, "SecureUXHelper.exe") + " apply " + '"' + "Rectify11 light theme" + '"';
 					}
 					else if (InstallOptions.ThemeDark)
 					{
 						await Task.Run(() => Process.Start(Path.Combine(Variables.Windir, "Resources", "Themes", "darkrectified.theme")));
-						key.SetValue("ApplyTheme", Path.Combine(Variables.Windir, "SecureUXHelper.exe") + " apply " + '"' + "Rectify11 dark theme" + '"', RegistryValueKind.String);
+						s = Path.Combine(Variables.Windir, "SecureUXHelper.exe") + " apply " + '"' + "Rectify11 dark theme" + '"';
 					}
 					else
 					{
 						await Task.Run(() => Process.Start(Path.Combine(Variables.Windir, "Resources", "Themes", "black.theme")));
-						key.SetValue("ApplyTheme", Path.Combine(Variables.Windir, "SecureUXHelper.exe") + " apply " + '"' + "Rectify11 Dark Mica theme" + '"', RegistryValueKind.String);
+						s = Path.Combine(Variables.Windir, "SecureUXHelper.exe") + " apply " + '"' + "Rectify11 Dark theme with Mica" + '"';
 					}
 				}
+				key.SetValue("ApplyTheme", s, RegistryValueKind.String);
+				key.SetValue("DeleteJunk", "rmdir /s /q " + Path.Combine(SpecialFolder.LocalApplicationData.ToString(), "junk"), RegistryValueKind.String);
 				key.Close();
 				using ShellLink shortcut = new();
 				shortcut.Target = Path.Combine(Variables.r11Folder, "Rectify11ControlCenter", "Rectify11ControlCenter.exe");
@@ -167,7 +204,6 @@ namespace Rectify11Installer.Pages
 				frmwiz.UpdateSideImage = t.Side;
 			}
 		}
-
 		/// <summary>
 		/// routine to perform before restarting
 		/// </summary>

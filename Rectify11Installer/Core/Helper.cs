@@ -15,9 +15,9 @@ namespace Rectify11Installer.Core
 		public static bool CheckIfUpdatesPending()
 		{
 			if (Variables.skipUpdateCheck)
-            {
+			{
 				return true;
-            }
+			}
 
 			if (!RebootRequired()) return true;
 			TaskDialog.Show(text: "You cannot install Rectify11 as Windows Updates are pending. Please reboot your system.",
@@ -27,67 +27,60 @@ namespace Rectify11Installer.Core
 				icon: TaskDialogStandardIcon.SecurityErrorRedBar);
 			return false;
 		}
-		public static bool UpdateIRectify11()
-		{
-			InstallOptions.InstallThemes = InstallOptions.iconsList.Contains("themeNode");
-			InstallOptions.InstallEP = InstallOptions.iconsList.Contains("epNode");
-			InstallOptions.InstallWinver = InstallOptions.iconsList.Contains("winverNode");
-			InstallOptions.InstallShell = InstallOptions.iconsList.Contains("shellNode");
-			InstallOptions.InstallWallpaper = InstallOptions.iconsList.Contains("wallpapersNode");
-			InstallOptions.InstallASDF = InstallOptions.iconsList.Contains("asdfNode");
-			return true;
-		}
-		public static bool FinalizeIRectify11()
-		{
-			InstallOptions.iconsList.Remove("themeNode");
-			InstallOptions.iconsList.Remove("epNode");
-			InstallOptions.iconsList.Remove("winverNode");
-			InstallOptions.iconsList.Remove("shellNode");
-			InstallOptions.iconsList.Remove("wallpapersNode");
-			InstallOptions.iconsList.Remove("asdfNode");
-			return true;
-		}
+
 		public static StringBuilder FinalText()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new SingleAssemblyComponentResourceManager(typeof(Strings.Rectify11));
 			var ok = new StringBuilder();
 			ok.AppendLine();
 			ok.AppendLine();
-			FinalizeIRectify11();
-			if (InstallOptions.iconsList.Count > 0)
+			if (Variables.InstallIcons)
 			{
 				ok.AppendLine(resources.GetString("installIcons"));
 			}
-			if (InstallOptions.InstallThemes)
+			if (InstallOptions.iconsList.Contains("themeNode"))
 			{
 				ok.AppendLine(resources.GetString("installThemes"));
 			}
 
-			if (InstallOptions.InstallEP)
+			if (InstallOptions.iconsList.Contains("epNode"))
 			{
 				ok.AppendLine(resources.GetString("installEP"));
 			}
 
-			if (InstallOptions.InstallWinver)
+			if (InstallOptions.iconsList.Contains("winverNode"))
 			{
 				ok.AppendLine(resources.GetString("installWinver"));
 			}
-			
-			if(InstallOptions.InstallASDF)
+
+			if (InstallOptions.iconsList.Contains("asdfNode"))
 			{
 				ok.AppendLine(resources.GetString("installASDF"));
 			}
 
-			if (InstallOptions.InstallShell)
+			if (InstallOptions.iconsList.Contains("shellNode"))
 			{
 				ok.AppendLine(resources.GetString("installShell"));
 			}
 
-			if (InstallOptions.InstallWallpaper)
+			if (InstallOptions.iconsList.Contains("gadgetsNode"))
+			{
+				ok.AppendLine(resources.GetString("installGadgets"));
+			}
+
+			if (InstallOptions.iconsList.Contains("wallpapersNode"))
 			{
 				ok.AppendLine(resources.GetString("installWallpapers"));
 			}
 
+			if (InstallOptions.iconsList.Contains("useravNode"))
+			{
+				ok.AppendLine(resources.GetString("userAvatars"));
+			}
+			if (InstallOptions.iconsList.Contains("soundNode"))
+			{
+				ok.AppendLine("Install sounds"); //Just a placeholder string, we will deal with these later on when stuff is done
+			}
 			return ok;
 		}
 		#endregion
@@ -136,6 +129,17 @@ namespace Rectify11Installer.Core
 		}
 		#endregion
 	}
+	public class NavigationHelper
+	{
+		public static event EventHandler OnNavigate;
+		public static void InvokeOnNavigate(object sender, EventArgs e)
+		{
+			if (OnNavigate != null)
+			{
+				OnNavigate.Invoke(sender, e);
+			}
+		}
+	}
 
 	#region Pages
 	public class RectifyPages
@@ -144,16 +148,19 @@ namespace Rectify11Installer.Core
 		public static EulaPage EulaPage = new();
 		public static InstallOptnsPage InstallOptnsPage;
 		public static ThemeChoicePage ThemeChoicePage = new();
+		public static CMenuPage CMenuPage = new();
 		public static EPPage EPPage = new();
-		public static InstallConfirmation InstallConfirmation = new();
+		public static InstallConfirmation InstallConfirmation;
 		public static ProgressPage ProgressPage;
 		public static Experimental ExperimentalPage = new();
 		public static DebugPage DebugPage = new();
+		public static UninstallPage UninstallPage;
 	}
 	public class TabPages
 	{
 		public static Controls.DarkAwareTabPage installPage;
 		public static Controls.DarkAwareTabPage themePage;
+		public static Controls.DarkAwareTabPage cmenupage;
 		public static Controls.DarkAwareTabPage epPage;
 		public static Controls.DarkAwareTabPage summaryPage;
 		public static Controls.DarkAwareTabPage progressPage;
@@ -162,29 +169,38 @@ namespace Rectify11Installer.Core
 		public static Controls.DarkAwareTabPage eulPage;
 		public static Controls.DarkAwareTabPage expPage;
 		public static Controls.DarkAwareTabPage debPage;
+		public static Controls.DarkAwareTabPage uninstPage;
 	}
 	public class InstallOptions
 	{
-		public static bool InstallEP;
-		public static bool InstallASDF;
-		public static bool InstallWallpaper;
-		public static bool InstallWinver;
-		public static bool InstallThemes;
-		public static bool ThemeDark;
-		public static bool ThemeBlack;
-		public static bool ThemeLight;
-		public static bool InstallShell;
-		public static bool InstallIcons;
-		public static bool SkipMFE;
-		public static bool TabbedNotMica;
+		public static bool InstallEP { get; set; }
+		public static bool InstallASDF { get; set; }
+		public static bool InstallWallpaper { get; set; }
+		public static bool InstallWinver { get; set; }
+		public static bool InstallGadgets { get; set; }
+		public static bool InstallThemes { get; set; }
+		public static bool ThemeDark { get; set; }
+		public static bool ThemeBlack { get; set; }
+		public static bool ThemeLight { get; set; }
+		public static bool InstallShell { get; set; }
+		public static bool InstallIcons { get; set; }
+		public static bool InstallSounds { get; set; }
+		public static bool SkipMFE { get; set; }
+		public static bool TabbedNotMica { get; set; }
+		public static bool userAvatars { get; set; }
+		public static int CMenuStyle = 1;
 		public static List<string> iconsList = new();
+		public static List<string> uninstIconsList = new();
 		public static bool InstallExtras()
 		{
 			return InstallEP
-			       || InstallASDF
-			       || InstallWallpaper
-			       || InstallWinver
-			       || InstallShell;
+				   || InstallASDF
+				   || InstallWallpaper
+				   || InstallGadgets
+				   || InstallWinver
+				   || InstallShell
+				   || InstallSounds
+				   || userAvatars;
 		}
 	}
 	#endregion
@@ -220,6 +236,26 @@ namespace Rectify11Installer.Core
 		{
 			WriteLine("[WARNING] " + v, ex);
 		}
+
+		public static void LogFile(string file, bool error, Exception ex)
+		{
+			if (error)
+			{
+				if (ex != null)
+				{
+					Logger.WriteLine("Error while writing " + file + ". " + ex.Message + Environment.NewLine + ex.StackTrace + Environment.NewLine);
+				}
+				else
+				{
+					Logger.WriteLine("Error while writing " + file + ". (No exception information)");
+				}
+			}
+			else
+			{
+				Logger.WriteLine("Wrote " + file);
+			}
+		}
+
 		#endregion
 	}
 }

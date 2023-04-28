@@ -81,6 +81,106 @@ namespace Rectify11Installer.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap _1D {
+            get {
+                object obj = ResourceManager.GetObject("_1D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap _1L {
+            get {
+                object obj = ResourceManager.GetObject("_1L", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap _2D {
+            get {
+                object obj = ResourceManager.GetObject("_2D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap _2L {
+            get {
+                object obj = ResourceManager.GetObject("_2L", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap _3D {
+            get {
+                object obj = ResourceManager.GetObject("_3D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap _3L {
+            get {
+                object obj = ResourceManager.GetObject("_3L", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap _4D {
+            get {
+                object obj = ResourceManager.GetObject("_4D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap _4L {
+            get {
+                object obj = ResourceManager.GetObject("_4L", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap _5D {
+            get {
+                object obj = ResourceManager.GetObject("_5D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap _5L {
+            get {
+                object obj = ResourceManager.GetObject("_5L", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] _7za {
@@ -103,9 +203,279 @@ namespace Rectify11Installer.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap asdf {
+            get {
+                object obj = ResourceManager.GetObject("asdf", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap avatars {
+            get {
+                object obj = ResourceManager.GetObject("avatars", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap blackPreview {
             get {
                 object obj = ResourceManager.GetObject("blackPreview", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to shell
+        ///{
+        ///	var
+        ///	{
+        ///		isw11=sys.is11
+        ///	}
+        ///	
+        ///	set
+        ///	{
+        ///		theme
+        ///		{
+        ///			name=&quot;modern&quot;
+        ///			background
+        ///			{
+        ///				//opacity=85
+        ///				//effect=1
+        ///			}
+        ///			image.align = 2// 0 = checked, 1 = image, 2 = both
+        ///                  image.color = [color.default,color.accent_light1]
+        ///		}
+        ///
+        ///		tip
+        ///		{
+        ///			enabled=1
+        ///			opacity=100
+        ///			width=400
+        ///			radius=1
+        ///			time=1.25
+        ///			padding=[10,10]
+        ///		}
+        ///
+        ///		exclude.where = !process.is_explorer
+        ///		showdelay=100
+        ///	}
+        ///
+        ///	images import &apos;imports/images.nss&apos;
+        ///
+        ///	static
+        ///	{	
+        ///		impor [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string config1 {
+            get {
+                return ResourceManager.GetString("config1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to shell
+        ///{
+        ///	var
+        ///	{
+        ///		isw11=sys.is11
+        ///	}
+        ///	
+        ///	set
+        ///	{
+        ///		theme
+        ///		{
+        ///			name=&quot;modern&quot;
+        ///			background
+        ///			{
+        ///				//opacity=85
+        ///				//effect=1
+        ///			}
+        ///			image.align = 2// 0 = checked, 1 = image, 2 = both
+        ///                  image.color = [color.default,color.accent_light1]
+        ///		}
+        ///
+        ///		tip
+        ///		{
+        ///			enabled=1
+        ///			opacity=100
+        ///			width=400
+        ///			radius=1
+        ///			time=1.25
+        ///			padding=[10,10]
+        ///		}
+        ///
+        ///		exclude.where = !process.is_explorer
+        ///		showdelay=100
+        ///	}
+        ///
+        ///	images import &apos;imports/images.nss&apos;
+        ///
+        ///	static
+        ///	{	
+        ///		impor [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string config2 {
+            get {
+                return ResourceManager.GetString("config2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to j
+        ///{
+        ///	var
+        ///	{
+        ///		isw11=sys.is11
+        ///	}
+        ///	
+        ///	set
+        ///	{
+        ///		theme
+        ///		{
+        ///			name=&quot;modern&quot;
+        ///			background
+        ///			{
+        ///				//opacity=85
+        ///				//effect=1
+        ///			}
+        ///			image.align = 2// 0 = checked, 1 = image, 2 = both
+        ///                  image.color = [color.default,color.accent_light1]
+        ///		}
+        ///
+        ///		tip
+        ///		{
+        ///			enabled=1
+        ///			opacity=100
+        ///			width=400
+        ///			radius=1
+        ///			time=1.25
+        ///			padding=[10,10]
+        ///		}
+        ///
+        ///		exclude.where = !process.is_explorer
+        ///		showdelay=100
+        ///	}
+        ///
+        ///	images import &apos;imports/images.nss&apos;
+        ///
+        ///	static
+        ///	{	
+        ///		import &apos;i [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string config3 {
+            get {
+                return ResourceManager.GetString("config3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to j
+        ///{
+        ///	var
+        ///	{
+        ///		isw11=sys.is11
+        ///	}
+        ///	
+        ///	set
+        ///	{
+        ///		theme
+        ///		{
+        ///			name=&quot;modern&quot;
+        ///			background
+        ///			{
+        ///				//opacity=85
+        ///				//effect=1
+        ///			}
+        ///			image.align = 2// 0 = checked, 1 = image, 2 = both
+        ///                  image.color = [color.default,color.accent_light1]
+        ///		}
+        ///
+        ///		tip
+        ///		{
+        ///			enabled=1
+        ///			opacity=100
+        ///			width=400
+        ///			radius=1
+        ///			time=1.25
+        ///			padding=[10,10]
+        ///		}
+        ///
+        ///		exclude.where = !process.is_explorer
+        ///		showdelay=100
+        ///	}
+        ///
+        ///	images import &apos;imports/images.nss&apos;
+        ///
+        ///	static
+        ///	{	
+        ///		import &apos;i [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string config4 {
+            get {
+                return ResourceManager.GetString("config4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to shell
+        ///{
+        ///	var
+        ///	{
+        ///		isw11=sys.is11
+        ///	}
+        ///	
+        ///	set
+        ///	{
+        ///		theme
+        ///		{
+        ///			name=&quot;modern&quot;
+        ///			background
+        ///			{
+        ///				//opacity=85
+        ///				//effect=1
+        ///			}
+        ///			image.align = 2// 0 = checked, 1 = image, 2 = both
+        ///                  image.color = [color.default,color.accent_light1]
+        ///		}
+        ///
+        ///		tip
+        ///		{
+        ///			enabled=1
+        ///			opacity=100
+        ///			width=400
+        ///			radius=1
+        ///			time=1.25
+        ///			padding=[10,10]
+        ///		}
+        ///
+        ///		exclude.where = !process.is_explorer
+        ///		showdelay=100
+        ///	}
+        ///
+        ///	images import &apos;imports/images.nss&apos;
+        ///
+        ///	static
+        ///	{	
+        ///		impor [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string config5 {
+            get {
+                return ResourceManager.GetString("config5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap cool {
+            get {
+                object obj = ResourceManager.GetObject("cool", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -136,6 +506,26 @@ namespace Rectify11Installer.Properties {
         internal static System.Drawing.Bitmap darkPreview {
             get {
                 object obj = ResourceManager.GetObject("darkPreview", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap discord {
+            get {
+                object obj = ResourceManager.GetObject("discord", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap done {
+            get {
+                object obj = ResourceManager.GetObject("done", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -187,6 +577,26 @@ namespace Rectify11Installer.Properties {
             get {
                 object obj = ResourceManager.GetObject("files7z", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap gadgets {
+            get {
+                object obj = ResourceManager.GetObject("gadgets", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap iconnewtree {
+            get {
+                object obj = ResourceManager.GetObject("iconnewtree", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -261,6 +671,26 @@ namespace Rectify11Installer.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap menus {
+            get {
+                object obj = ResourceManager.GetObject("menus", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap menusD {
+            get {
+                object obj = ResourceManager.GetObject("menusD", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to mstsc.exe.mun
         ///imageres.dll.mun
         ///wininetlui.dll
@@ -269,7 +699,29 @@ namespace Rectify11Installer.Properties {
         ///explorerframe.dll.mun
         ///cabview.dll
         ///CustomInstallExec.exe
-        ///msxml3.dll.mun.
+        ///msxml3.dll.mun
+        ///AuditNativeSnapIn.dll
+        ///axinstui.exe
+        ///basebrd.dll
+        ///bthci.dll
+        ///BthPanContextHandler.dll
+        ///bthprops.cpl
+        ///bthudtask.exe
+        ///btpanui.dll
+        ///Bubbles.scr
+        ///cmd.exe
+        ///comdlg32.dll.mun
+        ///compstui.dll.mun
+        ///comres.dll.mun
+        ///conhost.exe
+        ///connect.dll.mun
+        ///ddores.dll.mun
+        ///devicecenter.dll.mun
+        ///devicepairingfolder.dll.mun
+        ///hhctrl.ocx
+        ///icsigd.dll.mun
+        ///iexpress.exe
+        ///inetcpl.cpl.mun        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string newfiles {
             get {
@@ -358,6 +810,16 @@ namespace Rectify11Installer.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap sound {
+            get {
+                object obj = ResourceManager.GetObject("sound", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap theme {
             get {
                 object obj = ResourceManager.GetObject("theme", resourceCulture);
@@ -382,6 +844,26 @@ namespace Rectify11Installer.Properties {
             get {
                 object obj = ResourceManager.GetObject("themes", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap U {
+            get {
+                object obj = ResourceManager.GetObject("U", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap wallpapers {
+            get {
+                object obj = ResourceManager.GetObject("wallpapers", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }
